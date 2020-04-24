@@ -1,0 +1,8 @@
+---
+# defaults file for ansible-prom-reports
+prom_reports_project_dir: '/var/tmp/ansible_prom_reports'
+prom_reports_promapi: 'http://10.0.0.1:9090/api/v1/query_range'
+prom_reports_repo: 'https://github.com/bubnovd/prometheus-reports.git'
+prom_reports_promauth: false
+prom_reports_web_port: 6001
+prom_reports_step: "60"

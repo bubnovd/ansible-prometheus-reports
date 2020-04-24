@@ -1,0 +1,36 @@
+---
+# tasks file for ansible-mssql_exporter
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: docker
+    mode: 0775
+  with_items:
+    - "{{ prom_reports_project_dir }}"
+
+- name: Copy project
+  git:
+    repo: "{{ prom_reports_repo }}"
+    dest: "{{ prom_reports_project_dir }}"
+    version: latest
+
+- name: Build docker image
+  docker_image:
+    path: "{{ prom_reports_project_dir }}"
+    name: prom_reports:1.0
+    tag: v1.0
+    buildargs:
+      http_proxy: "{{ proxy_env.http_proxy }}"
+      https_proxy: "{{ proxy_env.https_proxy }}"
+
+- name: Run docker container
+  docker_container:
+    name: "prom_reports"
+    image: prom_reports:1.0
+    published_ports: "{{ prom_reports_web_port }}:80 "
+    env:
+      PROMAPI: "{{ prom_reports_promapi }}"
+      STEP: "{{ prom_reports_step }}"
+      PROMAUTH: "{{ prom_reports_promauth }}"
